@@ -19,13 +19,13 @@ function ec2_start(id)
             if (err && err.code === 'DryRunOperation') {
                 ec2.startInstances({InstanceIds: id, DryRun: false}, function(err, data) {
                     if (err) {
-                        return reject(new Error("Error"));
+                        return reject(err);
                     } else if (data) {
                         return resolve("Success");
                     }
                 });
             } else {
-                return reject(new Error(err));
+                return reject(err);
             }
         });
     });
@@ -38,13 +38,13 @@ function ec2_stop(id)
             if (err && err.code === 'DryRunOperation') {
                 ec2.stopInstances({InstanceIds: id, DryRun: false}, function(err, data) {
                     if (err) {
-                        return reject(new Error("Error"));
+                        return reject(err);
                     } else if (data) {
-                        return resolve();
+                        return resolve("Success");
                     }
                 });
             } else {
-                return reject(new Error(err));
+                return reject(err);
             }
         });
     });
@@ -53,29 +53,26 @@ function ec2_stop(id)
 exports.handler = async (event, context, callback) =>
 {
     let event_array;
-    var responseerr = {
+    var promised;
+    var response = {
         statusCode: 500,
-        body: JSON.stringify("Error"),
+        body: "Unknow command",
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
         event_array = JSON.parse(event.body);
     } catch (err) {
-        return callback(null, responseerr);
+        response.body = "Parser fail"
+        return callback(null, response);
     }
     const ec2id = event_array.ec2ids;
     const action = event_array.action;
     if (action === "START")
-        if (!(await ec2_start(ec2id)))
-            return callback(null, responseerr);
+        promised = await ec2_start(ec2id);
     else if (action === "STOP")
-        if (!(await ec2_stop(ec2id)))
-            return callback(null, responseerr);
+        promised = await ec2_stop(ec2id);
     else
-        return callback(null, responseerr);
-    return callback(null, {
-        statusCode: 200,
-        body: JSON.stringify("Success"),
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
-    });
+        return callback(null, response);
+    response.body = promised;
+    return callback(null, response);
 };
