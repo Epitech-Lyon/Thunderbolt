@@ -3,7 +3,6 @@
 # Variables required : 
 # project
 # region
-# bucket
 
 echo $@
 
@@ -12,7 +11,7 @@ echo $@
 ##
 
 if [ $# -ne 3 ] || [ $1 == "--help" ]; then
-    echo "./$0  \$project \$region"
+    echo "$0 \$project \$region"
 fi
 
 project=$1
@@ -25,12 +24,26 @@ if [[ ! "$project" =~ ^[a-z0-9\-]+$ ]]; then
 fi
 
 ##
+## Environnement setup
+##
+
+BUILD="build"
+
+mkdir -p $BUILD
+
+##
 ## Set the script controlflow
 ##
 
+function CLEANUP()
+{
+    rm -rf $BUILD
+}
+
 function RAISE()
 {
-    echo "A fatal error occured"
+    echo "Process terminated"
+    CLEANUP
     exit 0
 }
 
@@ -42,6 +55,8 @@ trap RAISE EXIT
 ## Start deploying
 ##
 
+echo $build
+
 echo "-------- Create SAM bucket --------"
 
 aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
@@ -52,10 +67,10 @@ sam build
 
 sam package \
     --s3-bucket $bucket \
-    --output-template-file package.yml
+    --output-template-file build/package.yml
 
 sam deploy \
-    --template-file package.yml \
+    --template-file build/package.yml \
     --stack-name $project \
     --capabilities CAPABILITY_NAMED_IAM \
     --region $region \
@@ -63,4 +78,6 @@ sam deploy \
     --parameter-overrides \
         Project=$project \
 
-rm -f package.yml
+CLEANUP
+
+trap - EXIT
