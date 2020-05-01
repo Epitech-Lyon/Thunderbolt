@@ -25,3 +25,9 @@ We are using the `SAM` (Serverless Application Model) on top of `cloudFormation`
 where:
   - `$project`: project name (must be lower case and '-' separated)
   - `$region` : AWS region deployement
+
+## Description
+
+| Service  | Basic power (start/stop) | Specific       |
+|----------|--------------------------|----------------|
+|  `EC2`   | handled                  |                |
