@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: thunderbolt - AWS SAM template
+
+Parameters:
+  Project:
+    Type: String
+    Default: thunderbolt
+
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Timeout: 10
+    Tags:
+      Project: !Ref Project
+    Environment:
+      Variables:
+        REGION: !Ref 'AWS::Region'
+
+Resources:
+
+  ######## Roles Lambda ########
+
+  GlobalLamdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: !Sub "${Project}-lambdaRole"
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          # Policy to have right to write in cloudwatch logs
+          - PolicyName: LogsPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "*"
+          - PolicyName: ec2Policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:StartInstances,
+                  - ec2:StopInstances"
+                Resource: "*"
+
+  ####### EC2 handler Lambda #######
+
+  FormsHandlingLambda:
+      Type: AWS::Serverless::Function
+      Properties:
+          FunctionName: !Sub "${Project}-ec2-handler"
+          Description: EC2 start/stop
+          CodeUri: src
+          Handler: ec2-handler.handler
+          Role: !GetAtt GlobalLamdaRole.Arn
+          Environment:
+            Variables:
+              Project: !Sub "${Project}"
+
+#  TimeScheduler:
+#    Type: "AWS::Events::Rule"
+#    Properties:
+#      Description: set the trigger rate
+#      ScheduleExpression: "cron(0/5 * * * ? *)" # definitely trigger by 5 minutes
+#      State: ENABLED
+#      Targets:
+#        - Arn: !Sub ${MyLambda.Arn}
+#          Id: TimeScheduler
+#
+#  TimeSchedulerPermission:
+#    Type: "AWS::Lambda::Permission"
+#    Properties:
+#      Action: 'lambda:InvokeFunction'
+#      FunctionName: !Sub ${MyLambda.Arn}
+#      Principal: 'events.amazonaws.com'
+#      SourceArn: !Sub ${TimeScheduler.Arn}
