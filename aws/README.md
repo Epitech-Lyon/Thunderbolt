@@ -1,8 +1,11 @@
 # AWS
 
+Thunderbolt AWS part.
+
 ## Dependencies
 
-  - `AWS CLI` configured
+  - `AWS account` configured
+  - `AWS CLI`
   - `SAM CLI`
 
 ## Deploy
