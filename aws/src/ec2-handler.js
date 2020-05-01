@@ -4,7 +4,7 @@
 ** Lambda for EC2 start/stop
 ** event description ->
 ** {
-**   id     : ec2id
+**   ec2ids : [ec2id, ...]
 **   action : START | STOP
 ** }
 */
@@ -40,7 +40,7 @@ function ec2_stop(id)
                     if (err) {
                         return reject(new Error("Error"));
                     } else if (data) {
-                        return resolve("Success");
+                        return resolve();
                     }
                 });
             } else {
@@ -63,12 +63,14 @@ exports.handler = async (event, context, callback) =>
     } catch (err) {
         return callback(null, responseerr);
     }
-    const ec2id = event_array.id;
+    const ec2id = event_array.ec2ids;
     const action = event_array.action;
-    if (action === "START" && !(await ec2_start(ec2id)))
-        return callback(null, responseerr);
-    else if (action === "STOP" && !(await ec2_stop(ec2id)))
-        return callback(null, responseerr);
+    if (action === "START")
+        if (!(await ec2_start(ec2id)))
+            return callback(null, responseerr);
+    else if (action === "STOP")
+        if (!(await ec2_stop(ec2id)))
+            return callback(null, responseerr);
     else
         return callback(null, responseerr);
     return callback(null, {
