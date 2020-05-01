@@ -46,14 +46,14 @@ Resources:
                     - logs:PutLogEvents
                   Resource: "*"
           - PolicyName: ec2Policy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ec2:StartInstances,
-                  - ec2:StopInstances"
-                Resource: "*"
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - ec2:StartInstances,
+                    - ec2:StopInstances"
+                  Resource: "*"
 
   ####### EC2 handler Lambda #######
 

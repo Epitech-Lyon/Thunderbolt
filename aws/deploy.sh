@@ -17,6 +17,7 @@ fi
 
 project=$1
 region=$2
+bucket=$project-sambuild
 
 if [[ ! "$project" =~ ^[a-z0-9\-]+$ ]]; then
     echo "Project name must match [a-z0-9\-]"
@@ -43,7 +44,7 @@ trap RAISE EXIT
 
 echo "-------- Create SAM bucket --------"
 
-aws s3api create-bucket --bucket $project-$bucket --region $region --create-bucket-configuration LocationConstraint=$region
+aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
 
 echo "-------- Deploy lambas --------"
 
@@ -59,7 +60,7 @@ sam deploy \
     --capabilities CAPABILITY_NAMED_IAM \
     --region $region \
     --tags Project=$project \
-    --parameter-override \
+    --parameter-overrides \
         Project=$project \
 
 rm -f package.yml
