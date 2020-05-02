@@ -162,7 +162,7 @@ Resources:
       Type: AWS::Serverless::Function
       Properties:
           FunctionName: !Sub "${Project}-appstream-handler"
-          Description: appstream start/stop
+          Description: appstream fleet start/stop
           CodeUri: src
           Handler: appstream-handler.handler
           Role: !GetAtt appstream_LamdaRole.Arn

@@ -8,6 +8,8 @@ All the functions can be deployed using the relevant provided service on cloud.
 
 This is not a real project but some tools shareable, usable, deployable.
 
+This repository is used as submodule for `paradigmShidt` project. It will be updated when needed.
+
 # Sub-References
 
 | Path     | Reference                              |
