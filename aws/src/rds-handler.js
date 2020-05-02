@@ -4,8 +4,9 @@
 ** Lambda for RDS start/stop
 ** event description ->
 ** {
-**   rdsids : rdsid
-**   action : START | STOP
+**   rdsids   : rdsid
+**   action   : START | STOP
+**   ? attrib : ?
 ** }
 */
 
@@ -17,7 +18,6 @@ function rds_start(id)
     return new Promise((resolve, reject) => {
         const params = {
             DBInstanceIdentifier: id
-            // DBSnapshotIdentifier: 'STRING_VALUE'
         };
         rds.sartDBInstance(params, function(err, data) {
             if (err)
@@ -32,10 +32,26 @@ function rds_stop(id)
 {
     return new Promise((resolve, reject) => {
         const params = {
-            DBInstanceIdentifier: id,
-            // DBSnapshotIdentifier: 'STRING_VALUE'
+            DBInstanceIdentifier: id
         };
         rds.stopDBInstance(params, function(err, data) {
+            if (err)
+                return reject(err);
+            else
+                return resolve("Success")
+        });
+    });
+}
+
+function rds_modifyInstanceClass(id, rclass)
+{
+    return new Promise((resolve, reject) => {
+        const params = {
+            DBInstanceIdentifier: id,
+            ApplyImmediately: true,
+            DBInstanceClass: rclass
+        };
+        rds.modifyDBInstance(params, function(err, data) {
             if (err)
                 return reject(err);
             else
@@ -61,10 +77,15 @@ exports.handler = async (event, context, callback) =>
         response.body = "Bad data format"
         return callback(null, response);
     }
+    /* If fault there is probably no problems */
+    try { const attrib = event_array.attrib; } catch (err) { }
+
     if (action === "START")
         promised = await rds_start(rdsid);
     else if (action === "STOP")
         promised = await rds_stop(rdsid);
+    else if (action === "MODCLASS")
+        promised = await rds_modifyInstanceClass(rdsid, attrib);
     else
         return callback(null, response);
     response.body = promised;
