@@ -38,11 +38,12 @@ mkdir -p $BUILD
 function CLEANUP()
 {
     rm -rf $BUILD
+    rm -rf .aws-sam
 }
 
 function RAISE()
 {
-    echo "Process terminated"
+    echo "Process terminated, fata error"
     CLEANUP
     exit 0
 }
@@ -79,5 +80,7 @@ sam deploy \
         Project=$project \
 
 CLEANUP
+
+echo "We are done !"
 
 trap - EXIT

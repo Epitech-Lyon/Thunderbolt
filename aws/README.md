@@ -23,11 +23,12 @@ We are using the `SAM` (Serverless Application Model) on top of `cloudFormation`
 `./deploy.sh $project $region`
 
 where:
-  - `$project`: project name (must be lower case and '-' separated)
+  - `$project`: project name which will be used as prefix on resources (must be lowercase and '-' separated)
   - `$region` : AWS region deployement
 
 ## Description
 
-| Service  | Basic power (start/stop) | Specific       |
-|----------|--------------------------|----------------|
-|  `EC2`   | handled                  |                |
+| Service  | Basic power (start/stop) | Specific                                      |
+|----------|--------------------------|-----------------------------------------------|
+| `EC2`    | handled                  |                                               |
+| `RDS`    | handled                  | instance classe /                             |
