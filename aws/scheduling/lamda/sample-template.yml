@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Scheduled lambda - AWS SAM template
+
+#
+# Create a scheduled lambda
+#
+
+Parameters:
+  Project:
+    Type: String
+    Default: thunderbolt
+  SchedulerRule:
+    Type: String
+    Default: cron(0/5 * * * ? *) # all 5 minutes
+
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Timeout: 10
+    Tags:
+      Project: !Ref Project
+      Env: !Ref Env
+    Environment:
+      Variables:
+        REGION: !Ref 'AWS::Region'
+
+Resources:
+
+scheduledLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+        FunctionName: !Sub "${Project-scheduled"
+        Description: scheduled lambda
+        CodeUri: src
+        Handler: sample-scheduled-lambda.handler
+        Role: !GetAtt LambdaRole.Arn"
+
+  lambdaScheduler:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: set the trigger rate
+      ScheduleExpression: !Sub ${SchedulerRule}
+      State: ENABLED
+      Targets:
+        - Arn: !Sub ${scheduledLambda.Arn}
+          Id: lambdaScheduler
+
+  lambdaSchedulerPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Sub ${scheduledLambda.Arn}
+      Principal: 'events.amazonaws.com'
+      SourceArn: !Sub ${lambdaScheduler.Arn}
