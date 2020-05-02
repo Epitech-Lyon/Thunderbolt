@@ -61,12 +61,12 @@ exports.handler = async (event, context, callback) =>
     };
     try {
         event_array = JSON.parse(event.body);
+        const ec2id = event_array.ec2ids;
+        const action = event_array.action;
     } catch (err) {
-        response.body = "Parser fail"
+        response.body = "Bad data format"
         return callback(null, response);
     }
-    const ec2id = event_array.ec2ids;
-    const action = event_array.action;
     if (action === "START")
         promised = await ec2_start(ec2id);
     else if (action === "STOP")
@@ -74,5 +74,7 @@ exports.handler = async (event, context, callback) =>
     else
         return callback(null, response);
     response.body = promised;
+    if (promised == "Success")
+        response.statusCode = 200;
     return callback(null, response);
 };
