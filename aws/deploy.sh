@@ -10,7 +10,7 @@ echo $@
 ## Entry checkup
 ##
 
-if [ $# -ne 3 ] || [ $1 == "--help" ]; then
+if [ $# -ne 2 ] || [ $1 == "--help" ]; then
     echo "$0 \$project \$region"
 fi
 
@@ -43,7 +43,7 @@ function CLEANUP()
 
 function RAISE()
 {
-    echo "Process terminated, fata error"
+    echo "Process terminated, fatal error"
     CLEANUP
     exit 0
 }
@@ -55,8 +55,6 @@ trap RAISE EXIT
 ##
 ## Start deploying
 ##
-
-echo $build
 
 echo "-------- Create SAM bucket --------"
 
