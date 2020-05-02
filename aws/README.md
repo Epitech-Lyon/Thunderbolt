@@ -42,4 +42,4 @@ where:
 | Service           | Description                           |
 |-------------------|---------------------------------------|
 | `Lambda`          | SAM template for scheduled lambda     |
-| `AppStream(2.0)`  | AppStream fleet auto-sclaing          |
+| `AppStream(2.0)`  | AppStream fleet auto-scaling          |

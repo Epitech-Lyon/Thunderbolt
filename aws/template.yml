@@ -54,7 +54,7 @@ Resources:
                 - Effect: Allow
                   Action:
                     - ec2:StartInstances,
-                    - ec2:StopInstances"
+                    - ec2:StopInstances
                   Resource: "*"
 
   ec2_LambdaFunction:
@@ -69,20 +69,103 @@ Resources:
             Variables:
               Project: !Sub "${Project}"
 
-#  TimeScheduler:
-#    Type: "AWS::Events::Rule"
-#    Properties:
-#      Description: set the trigger rate
-#      ScheduleExpression: "cron(0/5 * * * ? *)" # definitely trigger by 5 minutes
-#      State: ENABLED
-#      Targets:
-#        - Arn: !Sub ${MyLambda.Arn}
-#          Id: TimeScheduler
-#
-#  TimeSchedulerPermission:
-#    Type: "AWS::Lambda::Permission"
-#    Properties:
-#      Action: 'lambda:InvokeFunction'
-#      FunctionName: !Sub ${MyLambda.Arn}
-#      Principal: 'events.amazonaws.com'
-#      SourceArn: !Sub ${TimeScheduler.Arn}
+  #############################################
+  ######## RDS handling Role & Lambda #########
+  #############################################
+
+  rds_LamdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Project}-rds-LambdaRole"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        # Policy to have right to write in cloudwatch logs
+        - PolicyName: LogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+        - PolicyName: rdsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - rds:startDBInstance,
+                  - rds:stopDBInstance,
+                  - rds:modifyDBInstance
+                Resource: "*"
+
+  rds_LambdaFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+          FunctionName: !Sub "${Project}-rds-handler"
+          Description: rds start/stop/modify
+          CodeUri: src
+          Handler: rds-handler.handler
+          Role: !GetAtt rds_LamdaRole.Arn
+          Environment:
+            Variables:
+              Project: !Sub "${Project}"
+  
+  ###################################################
+  ######## AppStream handling Role & Lambda #########
+  ###################################################
+
+  appstream_LamdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Project}-appstream-LambdaRole"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        # Policy to have right to write in cloudwatch logs
+        - PolicyName: LogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+        - PolicyName: appstreamPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - appstream:startFleet,
+                  - appstream:stopFleet
+                Resource: "*"
+
+  appstream_LambdaFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+          FunctionName: !Sub "${Project}-appstream-handler"
+          Description: appstream start/stop
+          CodeUri: src
+          Handler: appstream-handler.handler
+          Role: !GetAtt appstream_LamdaRole.Arn
+          Environment:
+            Variables:
+              Project: !Sub "${Project}"

@@ -19,7 +19,7 @@ function rds_start(id)
         const params = {
             DBInstanceIdentifier: id
         };
-        rds.sartDBInstance(params, function(err, data) {
+        rds.startDBInstance(params, function(err, data) {
             if (err)
                 return reject(err);
             else
