@@ -1,25 +1,24 @@
 "use strict";
 
 /*
-** Lambda for RDS start/stop
+** Lambda for fleet start/stop
 ** event description ->
 ** {
-**   rdsids   : rdsid
-**   action   : START | STOP
-**   ? attrib : ?
+**   fleetid : fleetid
+**   action  : START | STOP
 ** }
 */
 
 const AWS = require('aws-sdk');
-const rds = new AWS.RDS();
+const appsteam = new AWS.AppStream();
 
-function rds_start(id)
+function fleet_start(id)
 {
     return new Promise((resolve, reject) => {
         const params = {
-            DBInstanceIdentifier: id
+            Name: id
         };
-        rds.sartDBInstance(params, function(err, data) {
+        appsteam.startFleet(params, function(err, data) {
             if (err)
                 return reject(err);
             else
@@ -28,13 +27,13 @@ function rds_start(id)
     });
 }
 
-function rds_stop(id)
+function fleet_stop(id)
 {
     return new Promise((resolve, reject) => {
         const params = {
-            DBInstanceIdentifier: id
+            Name: id
         };
-        rds.stopDBInstance(params, function(err, data) {
+        appsteam.stopFleet(params, function(err, data) {
             if (err)
                 return reject(err);
             else
@@ -42,24 +41,6 @@ function rds_stop(id)
         });
     });
 }
-
-function rds_modifyInstanceClass(id, rclass)
-{
-    return new Promise((resolve, reject) => {
-        const params = {
-            DBInstanceIdentifier: id,
-            ApplyImmediately: true,
-            DBInstanceClass: rclass
-        };
-        rds.modifyDBInstance(params, function(err, data) {
-            if (err)
-                return reject(err);
-            else
-                return resolve("Success")
-        });
-    });
-}
-
 exports.handler = async (event, context, callback) =>
 {
     let event_array;
@@ -71,21 +52,16 @@ exports.handler = async (event, context, callback) =>
     };
     try {
         event_array = JSON.parse(event.body);
-        const rdsid = event_array.rdsids;
+        const fleetid = event_array.fleetid;
         const action = event_array.action;
-        var attrib = "unused";
     } catch (err) {
+        response.body = "Bad data format"
         return callback(null, response);
     }
-    /* If fault there is probably no problems */
-    try { const attrib = event_array.attrib; } catch (err) { }
-
     if (action === "START")
-        promised = await rds_start(rdsid);
+        promised = await fleet_start(fleetid);
     else if (action === "STOP")
-        promised = await rds_stop(rdsid);
-    else if (action === "MODCLASS" && attrib != "unused")
-        promised = await rds_modifyInstanceClass(rdsid, attrib);
+        promised = await fleet_stop(fleetid);
     else
         return callback(null, response);
     response.body = promised;

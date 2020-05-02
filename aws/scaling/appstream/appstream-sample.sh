@@ -10,6 +10,12 @@
 # Variables required : 
 # fleet
 
+function RAISE()
+{
+    echo "Process terminated, fatal error"
+    exit 0
+}
+
 set -e
 
 trap RAISE EXIT

@@ -56,7 +56,7 @@ exports.handler = async (event, context, callback) =>
     var promised;
     var response = {
         statusCode: 500,
-        body: "Unknow command",
+        body: "Bad data format",
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
@@ -64,7 +64,6 @@ exports.handler = async (event, context, callback) =>
         const ec2id = event_array.ec2ids;
         const action = event_array.action;
     } catch (err) {
-        response.body = "Bad data format"
         return callback(null, response);
     }
     if (action === "START")

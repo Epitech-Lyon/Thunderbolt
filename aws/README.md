@@ -20,6 +20,8 @@ For `SAM CLI` linux installation, don't follow the AWS documentation. Just insta
 
 We are using the `SAM` (Serverless Application Model) on top of `cloudFormation` service.
 
+Philosophy [Infrastructure As Code](https://en.wikipedia.org/wiki/Infrastructure_as_code).
+
 `./deploy.sh $project $region`
 
 where:
