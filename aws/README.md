@@ -28,9 +28,18 @@ where:
   - `$project`: project name which will be used as prefix on resources (must be lowercase and '-' separated)
   - `$region` : AWS region deployement
 
-## Description
+## Action handled
 
-| Service  | Basic power (start/stop) | Specific                                      |
-|----------|--------------------------|-----------------------------------------------|
-| `EC2`    | handled                  |                                               |
-| `RDS`    | handled                  | instance classe /                             |
+| Service           | Basic power (start/stop) | Specific                                      |
+|-------------------|--------------------------|-----------------------------------------------|
+| `EC2`             | handled                  |                                               |
+| `RDS`             | handled                  | instance classe                               |
+| `AppStream(2.0)`  | handled                  |                                               |
+
+
+## Given Sample
+
+| Service           | Description                           |
+|-------------------|---------------------------------------|
+| `Lambda`          | SAM template for scheduled lambda     |
+| `AppStream(2.0)`  | AppStream fleet auto-sclaing          |
