@@ -55,7 +55,6 @@ exports.handler = async (event, context, callback) =>
         const fleetid = event_array.fleetid;
         const action = event_array.action;
     } catch (err) {
-        response.body = "Bad data format"
         return callback(null, response);
     }
     if (action === "START")

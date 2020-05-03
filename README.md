@@ -1,6 +1,6 @@
 # Thunderbolt
 
-Thunderbolt is a set of functions used for a basic Cloud control.
+Thunderbolt is a set of functions used for a basic cloud control.
 
 For now and being limited by my knowledge only AWS functions are provided.
 
@@ -8,7 +8,7 @@ All the functions can be deployed using the relevant provided service on cloud.
 
 This is not a real project but some tools shareable, usable, deployable.
 
-This repository is used as submodule for `paradigmShift` project. It will be updated when needed.
+This repository is used as git submodule for [paradigmShift](https://github.com/le0kar0ub1/ParadigmShift) project. It will be updated when needed.
 
 # Sub-References
 
