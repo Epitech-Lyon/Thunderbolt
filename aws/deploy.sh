@@ -59,7 +59,7 @@ trap RAISE EXIT
 
 echo "-------- Create SAM bucket --------"
 
-# aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
+aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
 
 echo "-------- Deploy lambas --------"
 
