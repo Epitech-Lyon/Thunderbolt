@@ -23,7 +23,7 @@ Resources:
   ######## EC2 handling Role & Lambda #########
   #############################################
 
-  ec2_LamdaRole:
+  ec2LamdaRole:
       Type: AWS::IAM::Role
       Properties:
         RoleName: !Sub "${Project}-ec2-LambdaRole"
@@ -57,14 +57,14 @@ Resources:
                     - ec2:StopInstances
                   Resource: "*"
 
-  ec2_LambdaFunction:
+  ec2LambdaFunction:
       Type: AWS::Serverless::Function
       Properties:
           FunctionName: !Sub "${Project}-ec2-handler"
           Description: EC2 start/stop
           CodeUri: src
           Handler: ec2-handler.handler
-          Role: !GetAtt ec2_LamdaRole.Arn
+          Role: !GetAtt ec2LamdaRole.Arn
           Environment:
             Variables:
               Project: !Sub "${Project}"
@@ -73,7 +73,7 @@ Resources:
   ######## RDS handling Role & Lambda #########
   #############################################
 
-  rds_LamdaRole:
+  rdsLamdaRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${Project}-rds-LambdaRole"
@@ -108,14 +108,14 @@ Resources:
                   - rds:modifyDBInstance
                 Resource: "*"
 
-  rds_LambdaFunction:
+  rdsLambdaFunction:
       Type: AWS::Serverless::Function
       Properties:
           FunctionName: !Sub "${Project}-rds-handler"
           Description: rds start/stop/modify
           CodeUri: src
           Handler: rds-handler.handler
-          Role: !GetAtt rds_LamdaRole.Arn
+          Role: !GetAtt rdsLamdaRole.Arn
           Environment:
             Variables:
               Project: !Sub "${Project}"
@@ -124,7 +124,7 @@ Resources:
   ######## AppStream handling Role & Lambda #########
   ###################################################
 
-  appstream_LamdaRole:
+  appstreamLamdaRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${Project}-appstream-LambdaRole"
@@ -158,14 +158,14 @@ Resources:
                   - appstream:stopFleet
                 Resource: "*"
 
-  appstream_LambdaFunction:
+  appstreamLambdaFunction:
       Type: AWS::Serverless::Function
       Properties:
           FunctionName: !Sub "${Project}-appstream-handler"
           Description: appstream fleet start/stop
           CodeUri: src
           Handler: appstream-handler.handler
-          Role: !GetAtt appstream_LamdaRole.Arn
+          Role: !GetAtt appstreamLamdaRole.Arn
           Environment:
             Variables:
               Project: !Sub "${Project}"

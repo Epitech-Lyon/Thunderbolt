@@ -12,6 +12,7 @@ echo $@
 
 if [ $# -ne 2 ] || [ $1 == "--help" ]; then
     echo "$0 \$project \$region"
+    exit 0
 fi
 
 project=$1
@@ -58,7 +59,7 @@ trap RAISE EXIT
 
 echo "-------- Create SAM bucket --------"
 
-aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
+# aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
 
 echo "-------- Deploy lambas --------"
 
