@@ -50,9 +50,8 @@ function ec2_stop(id)
     });
 }
 
-exports.handler = async (event, context, callback) =>
+exports.handler = async (event, callback) =>
 {
-    let event_array;
     var promised;
     var response = {
         statusCode: 500,
@@ -60,9 +59,8 @@ exports.handler = async (event, context, callback) =>
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
-        event_array = JSON.parse(event.body);
-        const ec2id = event_array.ec2ids;
-        const action = event_array.action;
+        const ec2id = event.ec2ids;
+        const action = event.action;
     } catch (err) {
         return callback(null, response);
     }

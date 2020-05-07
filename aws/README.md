@@ -2,6 +2,8 @@
 
 Thunderbolt AWS part.
 
+All the AWS functions provided can't be HTTP trigger. They can only be invoked.
+
 ## Dependencies
 
   - `AWS account` configured

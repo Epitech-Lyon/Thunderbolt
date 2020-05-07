@@ -60,9 +60,8 @@ function rds_modifyInstanceClass(id, rclass)
     });
 }
 
-exports.handler = async (event, context, callback) =>
+exports.handler = async (event, callback) =>
 {
-    let event_array;
     var promised;
     var response = {
         statusCode: 500,
@@ -70,15 +69,14 @@ exports.handler = async (event, context, callback) =>
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
-        event_array = JSON.parse(event.body);
-        const rdsid = event_array.rdsids;
-        const action = event_array.action;
+        const rdsid = event.rdsids;
+        const action = event.action;
         var attrib = "unused";
     } catch (err) {
         return callback(null, response);
     }
     /* If fault there is probably no problems */
-    try { const attrib = event_array.attrib; } catch (err) { }
+    try { const attrib = event.attrib; } catch (err) { }
 
     if (action === "START")
         promised = await rds_start(rdsid);
