@@ -30,6 +30,8 @@ where:
   - `$project`: project name which will be used as prefix on resources (must be lowercase and '-' separated)
   - `$region` : AWS region deployement
 
+The different resources are prefixed with the project name.
+
 ## Action handled
 
 | Service           | Basic power (start/stop) | Specific                                      |
