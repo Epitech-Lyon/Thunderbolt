@@ -3,6 +3,7 @@
 # Variables required : 
 # project
 # region
+# uniqu id
 
 echo $@
 
@@ -10,14 +11,15 @@ echo $@
 ## Entry checkup
 ##
 
-if [ $# -ne 2 ] || [ $1 == "--help" ]; then
-    echo "$0 \$project \$region"
+if [ $# -ne 3 ] || [ $1 == "--help" ]; then
+    echo "$0 \$project \$region \$uniqu"
     exit 0
 fi
 
 project=$1
 region=$2
-bucket=$project-sambuild
+uniqu=$3
+bucket=$project-$uniqu-sambuild
 
 if [[ ! "$project" =~ ^[a-z0-9\-]+$ ]]; then
     echo "Project name must match [a-z0-9\-]"

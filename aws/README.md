@@ -24,13 +24,16 @@ We are using the `SAM` (Serverless Application Model) on top of `cloudFormation`
 
 Philosophy [Infrastructure As Code](https://en.wikipedia.org/wiki/Infrastructure_as_code).
 
-`./deploy.sh $project $region`
+`./deploy.sh $project $region $uniqu`
 
 where:
   - `$project`: project name which will be used as prefix on resources (must be lowercase and '-' separated)
   - `$region` : AWS region deployement
+  - `$uniqu`  : unqiu id to create the sam-build s3 bucket like follow -> _$project-$uniqu-sambuild_
 
 The different resources are prefixed with the project name.
+
+example: `./deploy.sh thunderbolt eu-west-1 mysociety`
 
 ## Action handled
 
