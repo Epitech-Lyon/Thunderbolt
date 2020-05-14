@@ -11,14 +11,15 @@ echo $@
 ## Entry checkup
 ##
 
-if [ $# -ne 3 ] || [ $1 == "--help" ]; then
-    echo "$0 \$project \$region \$uniqu"
+if [ $# -ne 4 ] || [ $1 == "--help" ]; then
+    echo "$0 \$project \$region \$uniqu \$profile"
     exit 0
 fi
 
 project=$1
 region=$2
 uniqu=$3
+profile=$4
 bucket=$project-$uniqu-sambuild
 
 if [[ ! "$project" =~ ^[a-z0-9\-]+$ ]]; then
@@ -61,24 +62,30 @@ trap RAISE EXIT
 
 echo "-------- Create SAM bucket --------"
 
-aws s3api create-bucket --bucket $bucket --region $region --create-bucket-configuration LocationConstraint=$region
+aws s3api create-bucket                                         \
+    --bucket $bucket                                            \
+    --region $region                                            \
+    --create-bucket-configuration LocationConstraint=$region    \
+    --profile $awsprofile
 
 echo "-------- Deploy lambas --------"
 
-sam build 
+sam build --profile $awsprofile
 
-sam package \
-    --s3-bucket $bucket \
-    --output-template-file build/package.yml
+sam package                                     \
+    --s3-bucket $bucket                         \
+    --output-template-file build/package.yml    \
+    --profile $awsprofile
 
-sam deploy \
-    --template-file build/package.yml \
-    --stack-name $project \
-    --capabilities CAPABILITY_NAMED_IAM \
-    --region $region \
-    --tags Project=$project \
-    --parameter-overrides \
-        Project=$project \
+sam deploy                                      \
+    --template-file build/package.yml           \
+    --stack-name $project                       \
+    --capabilities CAPABILITY_NAMED_IAM         \
+    --region $region                            \
+    --tags Project=$project                     \
+    --profile $profile                          \
+    --parameter-overrides                       \
+        Project=$project                        \
 
 CLEANUP
 
