@@ -4,7 +4,7 @@
 ** Lambda for RDS start/stop
 ** event description ->
 ** {
-**   rdsids   : rdsid
+**   ids   : ids
 **   action   : START | STOP
 **   ? attrib : ?
 ** }
@@ -69,23 +69,30 @@ exports.handler = async (event, callback) =>
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
-        const rdsid = event.rdsids;
+        const ids = event.ids;
         const action = event.action;
-        var attrib = "unused";
+        var attrib;
     } catch (err) {
         return callback(null, response);
     }
     /* If fault there is probably no problems */
-    try { const attrib = event.attrib; } catch (err) { }
+    try { 
+        const attrib = event.attrib;
+    } catch (err) { 
+        attrib = "unused";
+    }
 
-    if (action === "START")
-        promised = await rds_start(rdsid);
-    else if (action === "STOP")
-        promised = await rds_stop(rdsid);
-    else if (action === "MODCLASS" && attrib != "unused")
-        promised = await rds_modifyInstanceClass(rdsid, attrib);
-    else
-        return callback(null, response);
+    for (let i in ids)
+    {
+        if (action === "START")
+            promised = await rds_start(ids[i]);
+        else if (action === "STOP")
+            promised = await rds_stop(ids[i]);
+        else if (action === "MODCLASS" && attrib != "unused")
+            promised = await rds_modifyInstanceClass(ids[i], attrib);
+        else
+            return callback(null, response);
+    }
     response.body = promised;
     if (promised == "Success")
         response.statusCode = 200;

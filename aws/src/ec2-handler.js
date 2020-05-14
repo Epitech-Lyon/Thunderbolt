@@ -4,7 +4,7 @@
 ** Lambda for EC2 start/stop
 ** event description ->
 ** {
-**   ec2ids : [ec2id, ...]
+**   ids : [ids, ...]
 **   action : START | STOP
 ** }
 */
@@ -59,15 +59,15 @@ exports.handler = async (event, callback) =>
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
-        const ec2id = event.ec2ids;
+        const ids = event.ids;
         const action = event.action;
     } catch (err) {
         return callback(null, response);
     }
     if (action === "START")
-        promised = await ec2_start(ec2id);
+        promised = await ec2_start(ids);
     else if (action === "STOP")
-        promised = await ec2_stop(ec2id);
+        promised = await ec2_stop(ids);
     else
         return callback(null, response);
     response.body = promised;

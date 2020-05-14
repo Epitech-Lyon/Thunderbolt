@@ -4,7 +4,7 @@
 ** Lambda for fleet start/stop
 ** event description ->
 ** {
-**   fleetid : fleetid
+**   fleetids : [ids, ...]
 **   action  : START | STOP
 ** }
 */
@@ -12,11 +12,11 @@
 const AWS = require('aws-sdk');
 const appsteam = new AWS.AppStream();
 
-function fleet_start(id)
+function fleet_start(ids)
 {
     return new Promise((resolve, reject) => {
         const params = {
-            Name: id
+            Name: ids
         };
         appsteam.startFleet(params, function(err, data) {
             if (err)
@@ -27,11 +27,11 @@ function fleet_start(id)
     });
 }
 
-function fleet_stop(id)
+function fleet_stop(ids)
 {
     return new Promise((resolve, reject) => {
         const params = {
-            Name: id
+            Name: ids
         };
         appsteam.stopFleet(params, function(err, data) {
             if (err)
@@ -50,17 +50,20 @@ exports.handler = async (event, callback) =>
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*'}
     };
     try {
-        const fleetid = event.fleetid;
+        const ids = event.ids;
         const action = event.action;
     } catch (err) {
         return callback(null, response);
     }
-    if (action === "START")
-        promised = await fleet_start(fleetid);
-    else if (action === "STOP")
-        promised = await fleet_stop(fleetid);
-    else
-        return callback(null, response);
+    for (let i in ids)
+    {
+        if (action === "START")
+            promised = await fleet_start(ids[i]);
+        else if (action === "STOP")
+            promised = await fleet_stop(ids[i]);
+        else
+            return callback(null, response);
+    }
     response.body = promised;
     if (promised == "Success")
         response.statusCode = 200;
