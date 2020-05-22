@@ -29,12 +29,12 @@ Philosophy [Infrastructure As Code](https://en.wikipedia.org/wiki/Infrastructure
 where:
   - `$project`     : project name which will be used as prefix on resources (must be lowercase and '-' separated)
   - `$region`      : AWS region deployement
-  - `$matchUniq`   : unqiu id to create the sam-build s3 bucket like follow -> _$project-$uniqu-sambuild_
-  - `$a<sprofile`  : the AWS profile you want use.
+  - `$matchUniq`   : unqiu id to create the sam-build s3 bucket like follow -> `$project-$uniqu-sambuild`
+  - `$awsprofile`  : the AWS profile you want use.
 
 The different resources are prefixed with the project name.
 
-example: `./deploy.sh thunderbolt eu-west-1 mysociety`
+example: `./deploy.sh thunderbolt eu-west-1 mysociety default`
 
 ## Action handled
 
